@@ -1,13 +1,10 @@
 <template>
-  <div>
-<h1 class="font-bold text-red-300 text-5">Hello</h1>
-  </div>
+  <main class="w-full bg-[#030621] h-full mx-auto">
+<ApiFipe/>
+  </main>
 </template>
 
 <script setup>
-
+import ApiFipe from '@/components/ApiFipe.vue'
 </script>
 
-<style lang="scss" scoped>
-
-</style>
