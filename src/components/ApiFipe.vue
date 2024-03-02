@@ -23,22 +23,22 @@
           </select>
         </div>
         <div>
-          <label for="Marca" class="block text-xl font-medium text-[#00dc82]"> Modelo </label>
-          <select name="marca" id="marca" v-model="marca"
+          <label for="modelo" class="block text-xl font-medium text-[#00dc82]"> Modelo </label>
+          <select name="modelo" id="modelo" v-model="modelo"
             class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm py-3">
             <option disabled value="">Selecione um modelo</option>
-            <option v-for="marca in marcas" :value="marca.codigo" :key="marca.codigo">
-              {{ marca.nome }}
+            <option v-for="modelo in modelos" :value="modelo.codigo" :key="modelo.codigo">
+              {{ modelo.nome }}
             </option>
           </select>
         </div>
         <div>
-          <label for="Marca" class="block text-xl font-medium text-[#00dc82]"> Ano </label>
-          <select name="marca" id="marca" v-model="marca"
+          <label for="ano" class="block text-xl font-medium text-[#00dc82]"> Ano </label>
+          <select name="ano" id="ano" v-model="ano"
             class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm py-3">
             <option disabled value="">Selecione um ano</option>
-            <option v-for="marca in marcas" :value="marca.codigo" :key="marca.codigo">
-              {{ marca.nome }}
+            <option v-for="ano in anos" :value="ano.codigo" :key="ano.codigo">
+              {{ ano.nome }}
             </option>
           </select>
         </div>
@@ -50,29 +50,53 @@
 import { ref, watch, onMounted } from 'vue';
 
 const marcas = ref({});
+const modelos = ref({});
 const tipoDeVeiculo = ref('');
 const marca = ref('');
+const modelo = ref('');
 const clickTipo = ref(false);
-
+const clickMarca = ref(false);
 
 const fetchMarcas = async () => {
   try {
     if (tipoDeVeiculo.value) {
-      const response = await fetch(`https://brasilapi.com.br/api/fipe/marcas/v1/${tipoDeVeiculo.value}`);
-      const data = await response.json();
-      marcas.value = data;
+      marcas.value = await (
+        await fetch(
+          `https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas`
+        )
+      ).json();
     }
   } catch (error) {
     console.error('Erro ao buscar marcas:', error);
   }
 };
 
+const fetchModelos = async () => {
+  try {
+    if (marca.value) {
+      const json = await (
+        await fetch(
+          `https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas/${marca.value}/modelos`
+        )
+      ).json();
+      modelos.value = json.modelos;
+    }
+  } catch (error) {
+    console.error('Erro ao buscar modelos:', error);
+  }
+};
+
 watch(tipoDeVeiculo, () => {
-  marca.value =  '';
+  marca.value = modelo.value =  '';
   clickTipo.value = true;
   fetchMarcas();
 });
 
+watch(marca, () => {
+  modelo.value =  '';
+  clickMarca.value = true;
+  fetchModelos();
+});
 
 onMounted(fetchMarcas);
 </script>
