@@ -12,50 +12,59 @@
     </div>
 
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8">
-        <div>
-          <label for="Marca" class="block text-xl font-medium text-[#00dc82]"> Marca </label>
-          <select name="marca" id="marca" v-model="marca"
-            class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm py-3">
-            <option disabled value="">Selecione uma marca</option>
-            <option v-for="marca in marcas" :value="marca.codigo" :key="marca.codigo">
-              {{ marca.nome }}
-            </option>
-          </select>
-        </div>
-        <div>
-          <label for="modelo" class="block text-xl font-medium text-[#00dc82]"> Modelo </label>
-          <select name="modelo" id="modelo" v-model="modelo"
-            class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm py-3">
-            <option disabled value="">Selecione um modelo</option>
-            <option v-for="modelo in modelos" :value="modelo.codigo" :key="modelo.codigo">
-              {{ modelo.nome }}
-            </option>
-          </select>
-        </div>
-        <div>
-          <label for="ano" class="block text-xl font-medium text-[#00dc82]"> Ano </label>
-          <select name="ano" id="ano" v-model="ano"
-            class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm py-3">
-            <option disabled value="">Selecione um ano</option>
-            <option v-for="ano in anos" :value="ano.codigo" :key="ano.codigo">
-              {{ ano.nome }}
-            </option>
-          </select>
-        </div>
+      <div>
+        <label for="Marca" class="block text-xl font-medium text-[#00dc82]"> Marca </label>
+        <select name="marca" id="marca" v-model="marca"
+          class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm py-3">
+          <option disabled value="">Selecione uma marca</option>
+          <option v-for="marca in marcas" :value="marca.codigo" :key="marca.codigo">
+            {{ marca.nome }}
+          </option>
+        </select>
       </div>
+      <div>
+        <label for="modelo" class="block text-xl font-medium text-[#00dc82]"> Modelo </label>
+        <select name="modelo" id="modelo" v-model="modelo"
+          class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm py-3">
+          <option disabled value="">Selecione um modelo</option>
+          <option v-for="modelo in modelos" :value="modelo.codigo" :key="modelo.codigo">
+            {{ modelo.nome }}
+          </option>
+        </select>
+      </div>
+      <div>
+        <label for="ano" class="block text-xl font-medium text-[#00dc82]"> Ano </label>
+        <select name="ano" id="ano" v-model="ano"
+          class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm py-3">
+          <option disabled value="">Selecione um ano</option>
+          <option v-for="ano in anos" :value="ano.codigo" :key="ano.codigo">
+            {{ ano.nome }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="bg-white h-32 mt-8">
+      <p class="text-red-500">{{valor}} {{ mesReferencia }}  </p>
+    </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 
 const marcas = ref({});
 const modelos = ref({});
+const anos = ref({});
 const tipoDeVeiculo = ref('');
 const marca = ref('');
 const modelo = ref('');
+const ano = ref('');
+const valor = ref('');
+const mesReferencia = ref('');
 const clickTipo = ref(false);
 const clickMarca = ref(false);
+const clickModelo = ref(false);
 
 const fetchMarcas = async () => {
   try {
@@ -86,17 +95,58 @@ const fetchModelos = async () => {
   }
 };
 
+const fetchAnos = async () => {
+  try {
+  if (modelo.value) {
+    anos.value = await (
+      await fetch(
+        `https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas/${marca.value}/modelos/${modelo.value}/anos`
+      )
+    ).json();
+  }
+  // Tratamento para Veículos Zero KM, pois a API exibe ano "32000" para esses casos
+  if (anos.value[0].nome.startsWith('32000'))
+    anos.value[0].nome = anos.value[0].nome.replace('32000', 'Zero KM');
+  } catch (error) {
+    console.error('Erro ao buscar ano:', error);
+  }
+};
+
+const fetchValor = async () => {
+  try {
+  if (ano.value) {
+    valor.value = '';
+    const json = await (
+      await fetch(
+        `https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas/${marca.value}/modelos/${modelo.value}/anos/${ano.value}`
+      )
+    ).json();
+    valor.value = json.Valor;
+    mesReferencia.value = json.Mes;
+  }
+} catch (error) {
+    console.error('Erro ao buscar valor:', error);
+  }
+};
+
 watch(tipoDeVeiculo, () => {
-  marca.value = modelo.value =  '';
+  marca.value = modelo.value = ano.value = valor.value = '';
   clickTipo.value = true;
   fetchMarcas();
 });
 
 watch(marca, () => {
-  modelo.value =  '';
+  modelo.value = ano.value = valor.value = '';
   clickMarca.value = true;
   fetchModelos();
 });
 
+watch(modelo, () => {
+  ano.value = valor.value = '';
+  clickModelo.value = true;
+  fetchAnos();
+});
+
+watch(ano, fetchValor);
 onMounted(fetchMarcas);
 </script>
