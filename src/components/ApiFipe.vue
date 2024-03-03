@@ -43,8 +43,20 @@
         </select>
       </div>
     </div>
-    <div class="bg-white h-32 mt-8">
-      <p class="text-red-500">{{valor}} {{ mesReferencia }}  </p>
+    <div v-if="dadosSelecionados" class="grid  gap-8 grid-cols-2 py-10 mt-12">
+      <div class="border-solid border-2 text-white border-white rounded-lg p-4">
+        <p class="text-sm mb-2 md:mb-1"> {{ modeloSelecionado }}</p>
+        <p class="md:text-lg text-xl font-semibold mb-2 md:mb-1">{{ nomeVeiculo }}</p>
+        <p class="text-sm mb-2 md:mb-1"> Código Fipe: <span class="font-bold">{{codigoFipe }} </span> </p>
+
+
+      </div>
+      <div class="border-solid text-white border-2 border-white rounded-lg p-4">
+  <p class="text-sm mb-2 md:mb-1">Preço médio</p>
+  <p class="md:text-3xl text-xl font-bold mb-2 md:mb-1">{{ valor }}</p>
+  <p class="text-sm mb-2 md:mb-1">Mês de referência: {{ mesReferencia }}</p>
+</div>
+
     </div>
   </div>
 </template>
@@ -61,10 +73,14 @@ const marca = ref('');
 const modelo = ref('');
 const ano = ref('');
 const valor = ref('');
+const codigoFipe = ref('');
+const nomeVeiculo = ref('');
 const mesReferencia = ref('');
+const modeloSelecionado = ref('');
 const clickTipo = ref(false);
 const clickMarca = ref(false);
 const clickModelo = ref(false);
+const dadosSelecionados = ref(false);
 
 const fetchMarcas = async () => {
   try {
@@ -114,6 +130,7 @@ const fetchAnos = async () => {
 
 const fetchValor = async () => {
   try {
+    dadosSelecionados.value = false;
   if (ano.value) {
     valor.value = '';
     const json = await (
@@ -122,7 +139,11 @@ const fetchValor = async () => {
       )
     ).json();
     valor.value = json.Valor;
-    mesReferencia.value = json.Mes;
+    codigoFipe.value = json.CodigoFipe;
+    nomeVeiculo.value = json.Modelo;
+      modeloSelecionado.value = json.Marca;
+      mesReferencia.value = json.MesReferencia;
+      dadosSelecionados.value = true;
   }
 } catch (error) {
     console.error('Erro ao buscar valor:', error);
