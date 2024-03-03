@@ -1,46 +1,50 @@
-# fipe-vue
+## 💻 Sobre o projeto
 
-This template should help get you started developing with Vue 3 in Vite.
+Este é um projeto Fipe-Vue, que facilita o acesso e a visualização das informações de veículos da tabela FIPE através de sua API.
 
-## Recommended IDE Setup
+## :rocket:  Tecnologias utilizadas
+Esse projeto foi desenvolvido com as seguintes tecnologias:
+- [Vue](https://vuejs.org/)
+- [Tailwind](https://tailwindcss.com/)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## 💾 Instalação
 
-## Type Support for `.vue` Imports in TS
+Instale todas as dependências do projeto
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+```
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+Rode a aplicação
 
-```sh
+```
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
 
-```sh
-npm run build
-```
+## :metal: Como contribuir
 
-### Lint with [ESLint](https://eslint.org/)
+- Faça um fork desse repositório;
+- Cria uma branch com a sua feature: `git checkout -b minha-feature`;
+- Faça commit das suas alterações: `git commit -m 'feat: Minha nova feature'`;
+- Faça push para a sua branch: `git push origin minha-feature`.
+- Status do Projeto: Concluído :heavy_check_mark:
 
-```sh
-npm run lint
-```
+
+Depois que o merge da sua pull request for feito, você pode deletar a sua branch.
+
+
+## 📝 License
+
+Esse projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+<h5 align="center">
+    Feito com 🖤 ☕  by <a href="https://danielcrubens.github.io" target="_blank">Daniel Rubens</a>
+</h5>
+
+
+
+
+
+
