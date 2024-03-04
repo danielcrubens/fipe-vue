@@ -62,91 +62,107 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 
-const marcas = ref({});
-const modelos = ref({});
-const anos = ref({});
-const tipoDeVeiculo = ref('');
-const marca = ref('');
-const modelo = ref('');
-const ano = ref('');
-const valor = ref('');
-const codigoFipe = ref('');
-const nomeVeiculo = ref('');
-const mesReferencia = ref('');
-const modeloSelecionado = ref('');
-const clickTipo = ref(false);
-const clickMarca = ref(false);
-const clickModelo = ref(false);
-const dadosSelecionados = ref(false);
+interface Marca {
+  codigo: string;
+  nome: string;
+}
+
+interface Modelo {
+  codigo: string;
+  nome: string;
+}
+
+interface Ano {
+  codigo: string;
+  nome: string;
+}
+
+const marcas = ref<Marca[]>([]);
+const modelos = ref<Modelo[]>([]);
+const anos = ref<Ano[]>([]);
+const tipoDeVeiculo = ref<string>('');
+const marca = ref<string>('');
+const modelo = ref<string>('');
+const ano = ref<string>('');
+const valor = ref<string>('');
+const codigoFipe = ref<string>('');
+const nomeVeiculo = ref<string>('');
+const mesReferencia = ref<string>('');
+const modeloSelecionado = ref<string>('');
+const clickTipo = ref<boolean>(false);
+const clickMarca = ref<boolean>(false);
+const clickModelo = ref<boolean>(false);
+const dadosSelecionados = ref<boolean>(false);
 
 const fetchMarcas = async () => {
   try {
     if (tipoDeVeiculo.value) {
-      marcas.value = await (
-        await fetch(
-          `https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas`
-        )
-      ).json();
+      const response = await fetch(`https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas`);
+      if (!response.ok) {
+        throw new Error('Erro ao buscar marcas');
+      }
+      marcas.value = await response.json();
     }
   } catch (error) {
-    console.error('Erro ao buscar marcas:', error);
+    console.error(error);
   }
 };
 
 const fetchModelos = async () => {
   try {
     if (marca.value) {
-      const json = await (
-        await fetch(
-          `https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas/${marca.value}/modelos`
-        )
-      ).json();
+      const response = await fetch(`https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas/${marca.value}/modelos`);
+      if (!response.ok) {
+        throw new Error('Erro ao buscar modelos');
+      }
+      const json = await response.json();
       modelos.value = json.modelos;
     }
   } catch (error) {
-    console.error('Erro ao buscar modelos:', error);
+    console.error(error);
   }
 };
 
 const fetchAnos = async () => {
   try {
-  if (modelo.value) {
-    anos.value = await (
-      await fetch(
-        `https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas/${marca.value}/modelos/${modelo.value}/anos`
-      )
-    ).json();
-  }
-  // Tratamento para Veículos Zero KM, pois a API exibe ano "32000" para esses casos
-  if (anos.value[0].nome.startsWith('32000'))
-    anos.value[0].nome = anos.value[0].nome.replace('32000', 'Zero KM');
+    if (modelo.value) {
+      const response = await fetch(`https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas/${marca.value}/modelos/${modelo.value}/anos`);
+      if (!response.ok) {
+        throw new Error('Erro ao buscar anos');
+      }
+      anos.value = await response.json();
+      // Tratamento para Veículos Zero KM, pois a API exibe ano "32000" para esses casos
+      if (anos.value[0]?.nome.startsWith('32000')) {
+        anos.value[0].nome = anos.value[0].nome.replace('32000', 'Zero KM');
+      }
+    }
   } catch (error) {
-    console.error('Erro ao buscar ano:', error);
+    console.error(error);
   }
 };
 
 const fetchValor = async () => {
   try {
     dadosSelecionados.value = false;
-  if (ano.value) {
-    valor.value = '';
-    const json = await (
-      await fetch(
-        `https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas/${marca.value}/modelos/${modelo.value}/anos/${ano.value}`
-      )
-    ).json();
-    valor.value = json.Valor;
-    codigoFipe.value = json.CodigoFipe;
-    nomeVeiculo.value = json.Modelo;
+    if (ano.value) {
+      valor.value = '';
+      const response = await fetch(`https://parallelum.com.br/fipe/api/v1/${tipoDeVeiculo.value}/marcas/${marca.value}/modelos/${modelo.value}/anos/${ano.value}`);
+      if (!response.ok) {
+        throw new Error('Erro ao buscar valor');
+      }
+      const json = await response.json();
+      valor.value = json.Valor;
+      codigoFipe.value = json.CodigoFipe;
+      nomeVeiculo.value = json.Modelo;
       modeloSelecionado.value = json.Marca;
       mesReferencia.value = json.MesReferencia;
       dadosSelecionados.value = true;
-  }
-} catch (error) {
-    console.error('Erro ao buscar valor:', error);
+    }
+  } catch (error) {
+    console.error(error);
   }
 };
 
